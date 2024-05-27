@@ -1,9 +1,17 @@
 <template>
   <div class="flex flex-col border-r-2 h-full w-full">
-    <div class="h-[70vh] w-full overflow-auto pl-3 pt-3 flex flex-wrap gap-2 cursor-pointer">
-      <div class="md:w-1/4 lg:w-1/6" v-for="menu in menuData" :key="menu.id"
-      @click="getItemById(menu.id)"
+    <div class="h-[70vh] w-full overflow-auto pl-3 pt-3 flex flex-wrap gap-2">
+      <div
+        class="md:w-1/4 lg:w-1/6 cursor-pointer relative"
+        v-for="menu in menu"
+        :key="menu.id"
+        @click="addToCarts(menu.id)"
       >
+        <div v-if="checkItemId(menu.id)"
+          class="bg-green-800 text-white items-center justify-center flex rounded-lg shadow-md absolute top-0 h-full text-center left-0 w-full opacity-50"
+        >
+          <div>Selected</div>
+        </div>
         <img
           :src="menu.image ? menu.image : 'https://via.placeholder.com/250'"
           alt="food"
@@ -20,45 +28,42 @@
       </div>
     </div>
 
-    <div class="fex flex-wap bg-slate-200 py-3 px-2" >
+    <div class="fex flex-wap bg-slate-200 py-3 px-2">
       <button
         class="bg-slate-400 uppercase hover:bg-green-900 shadow-md text-white font-light py-3 px-5 rounded mr-2"
-        v-for="category in categories" :key="category.id" 
-        @click="getCategoryId(category.id)" 
-      
+        :class="
+          category.id === selectedCategory ? 'bg-green-900' : 'bg-slate-400'
+        "
+        v-for="category in categories"
+        :key="category.id"
+        @click="getCategoryId(category.id)"
       >
-        {{category.category}}
+        {{ category.category }}
       </button>
     </div>
- 
-  
   </div>
 </template>
 
 <script setup>
+import { onMounted, computed } from "vue";
+import { useStore } from "vuex";
 
-import { defineProps, defineEmits} from "vue";
-
-
-const emit = defineEmits(['emiCatId','otherEmit'])
-const props = defineProps({
-  menuData: {
-    Array,
-    require: true,
-  },
-  categories: {
-    Array,
-    require: true,
-  },
-});
-
-const getCategoryId = (id) =>{
-  emit('emiCatId',id)
-  
- }
- const getItemById = (id)=>{
-  emit('otherEmit',id)
-
- }
+const store = useStore();
+onMounted(() => store.dispatch("loadData"));
+const menu = computed(() => store.state.menu);
+const categories = computed(() => store.state.categories);
+const getCategoryId = (id) => store.commit("filteredMenu", id);
+const selectedCategory = computed(() => store.state.selected);
+const addToCarts = (id) =>{
+   store.commit("addToCart", id);
+   store.dispatch('total')
+}
+const checkItemId = (id) => {
+  let itemIndex = store.state.addToCart.findIndex((item) => item.id == id);
+  if (itemIndex !== -1) {
+    return true;
+  }
+  return false;
+};
 
 </script>

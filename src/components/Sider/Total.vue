@@ -31,14 +31,9 @@
   </div>
 </template>
 <script setup>
-import { defineProps } from 'vue';
-
-const props = defineProps({
-  total : {
-    type:Number,
-    required:true
-  }
-
-})
+import { computed } from "vue";
+import { useStore } from "vuex";
+const store = useStore();
+const total = computed(() => store.state.theTotal);
 </script>
 

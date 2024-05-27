@@ -1,7 +1,8 @@
 <template>
     <div class="max-h-[vh40] overflow-auto  pr-2 text-xs">
-    <div v-for="items in menuData" :key="items.id"
+    <div v-for="items in cart" :key="items.id"
       class="flex justify-between text-center bg-slate-200 rounded-lg py-3 px-2 my-3 relative"
+      
     >
       <span @click="removeItem(items.id)"
         class="absolute flex -top-3 w-5 text-center items-center rounded-full justify-center h-5 -right-2 cursor-pointer bg-red-500 text-xs text-white"
@@ -31,20 +32,23 @@
 
 </template>
 <script setup>
+import {computed} from 'vue';
+import { useStore } from "vuex";
 
-import { defineProps, defineEmits } from "vue";
 
-const emits = defineEmits(['increaseQuantity','decreaseQuantity','removeItem'])
+const store = useStore();
+const cart = computed(() => store.state.addToCart);
 
-const props = defineProps({
-  menuData: Array,
-  require:true
-});
-
-const increaseQuantity = (id) => emits('increaseQuantity',id)
-const decreaseQuantity = (id) => emits('decreaseQuantity',id)
+const increaseQuantity = (id) =>{ 
+  store.commit('increaseQuantity',id)
+store.dispatch('total')
+}
+const decreaseQuantity = (id) => {
+  store.commit('decreaseQuantity',id)
+  store.dispatch('total')
+}
 const removeItem = (id) =>{
-  console.log("At cart",id);
-   emits('removeItem',id)
+   store.commit('removeItem',id)
+   store.dispatch('total')
 }
  </script>

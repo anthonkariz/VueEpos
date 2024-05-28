@@ -5,8 +5,16 @@
       <div class="">12345678</div>
     </div>
     <div class="flex justify-between uppercase">
-      <div>guest :2</div>
-      <div>table: 1</div>
+      <div>Name :{{ Name }}</div>
+      <div>table: {{ table }}</div>
     </div>
   </div>
 </template>
+<script setup>
+import { computed } from 'vue';
+import { useStore } from 'vuex';
+const store = useStore();
+
+const table = computed(() => store.state.customerName.table);
+const Name = computed(() => store.state.customerName.name);
+</script>

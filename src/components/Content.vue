@@ -1,5 +1,9 @@
 <template>
   <div class="flex flex-col border-r-2 h-full w-full">
+    <div v-if="!loading" 
+    class="flex items-center justify-center h-full">
+    <div class="text-3xl">Loading....</div>
+  </div>
     <div class="h-[70vh] w-full overflow-auto pl-3 pt-3 flex flex-wrap gap-2">
       <div
         class="md:w-1/4 lg:w-1/6 cursor-pointer relative"
@@ -10,14 +14,13 @@
         <div v-if="checkItemId(menu.id)"
           class="bg-green-800 text-white items-center justify-center flex rounded-lg shadow-md absolute top-0 h-full text-center left-0 w-full opacity-50"
         >
-          <div>Selected</div>
+        <div>Selected</div>
         </div>
         <img
           :src="menu.image ? menu.image : 'https://via.placeholder.com/250'"
           alt="food"
           class="rounded-tr-lg rounded-tl-lg"
         />
-
         <div class="bg-zinc-200 pt-3 rounded-br-lg rounded-bl-lg">
           <h5 class="text-center uppercase text-xs">{{ menu.title }}</h5>
           <div class="flex justify-between px-3 py-2 text-xs">
@@ -49,7 +52,7 @@ import { onMounted, computed } from "vue";
 import { useStore } from "vuex";
 
 const store = useStore();
-onMounted(() => store.dispatch("loadData"));
+onMounted(() =>  store.dispatch("loadData"));
 const menu = computed(() => store.state.menu);
 const categories = computed(() => store.state.categories);
 const getCategoryId = (id) => store.commit("filteredMenu", id);
@@ -58,6 +61,7 @@ const addToCarts = (id) =>{
    store.commit("addToCart", id);
    store.dispatch('total')
 }
+const loading = computed(() => store.state.loading);
 const checkItemId = (id) => {
   let itemIndex = store.state.addToCart.findIndex((item) => item.id == id);
   if (itemIndex !== -1) {

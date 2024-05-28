@@ -15,9 +15,10 @@
           <div class="flex justify-end items-center">
             <div class="mr-2">October 18th 2002 10:00AM</div>
             <button
+            @click="clear"
               class="bg-slate-300 hover:bg-blue-700 shadow-md text-white font-light py-2 px-4 rounded"
             >
-              Add Table
+              clear
             </button>
           </div>
         </div>
@@ -26,5 +27,5 @@
 </template>
 
 <script setup>
-
+   const clear = () => localStorage.removeItem('menu');
 </script>
